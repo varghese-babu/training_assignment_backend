@@ -1,6 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { AbstractEntity } from "./AbstractEntity";
+import { Address } from "./address";
 import { Department } from "./Department";
+import { EmployeeRoles } from "./EmployeeRoles";
 
 @Entity("employee")
 export class Employee extends AbstractEntity {
@@ -28,4 +30,19 @@ export class Employee extends AbstractEntity {
 
     @Column()
     public departmentId: string;
+
+    @OneToOne((type) => EmployeeRoles, { cascade: true })
+    @JoinColumn()
+    public role: EmployeeRoles;
+
+    @Column({nullable: true})
+    public roleId: string;
+
+    @OneToOne((type) => Address, { cascade: true })
+    @JoinColumn()
+    public address: Address;
+
+    @Column({nullable: true})
+    public addressId: string;
+
 }

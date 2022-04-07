@@ -1,4 +1,5 @@
 import { EntityRepository, getConnection, Repository } from "typeorm";
+import { Address } from "../entities/address";
 import { Employee } from "../entities/Employee";
 
 export class EmployeeRepository extends Repository<Employee> {
@@ -7,9 +8,19 @@ export class EmployeeRepository extends Repository<Employee> {
         return employeeRepo.findAndCount();
     }
 
-    public async getEmployeeById(id: string) {
+    public async getEmployeeById(empId: string) {
         const employeeRepo = getConnection().getRepository(Employee);
-        return employeeRepo.findOne(id);
+        //return employeeRepo.findOne(id,{relations: ['Address']});
+        const data = employeeRepo.createQueryBuilder("employee").leftJoinAndSelect("employee.address","address").where("employee.id=:empId",{empId}).getOne();
+        return data;
+    }
+
+    public async getEmployeeByUsername(username: string) {
+        const employeeRepo = getConnection().getRepository(Employee);
+        const employeeDetail = await employeeRepo.findOne({
+            where: {username},
+        });
+        return employeeDetail;
     }
 
     public async saveEmployeeDetails(employeeDetails: Employee) {
